@@ -16,12 +16,20 @@ jobs:
         entrypoint: appimage-builder
         args: --recipe ./AppImageBuilder.yml --skip-test --skip-appimage
     - name: Remove libapprun_hooks.so
-      run: sed 's|LD_PRELOAD=*||g' -i AppDir/.env
+      # Workaround jmalloc issue with LD_PRELOAD hooks https://github.com/jemalloc/jemalloc/issues/443
+      # 
+      # Not using libapprun_hooks.so may cause that external applications called by bforartis to crash.
+      # This occurs mainly because the libraries inclided in the AppImage are not binary compatible with
+      # the ones required by the external application. Hoppefully almost everything is included in the 
+      # bundle.
+      run: |
+        sed 's|LD_PRELOAD=*||g' -i AppDir/.env
+        find AppDir/ -name 'libapprun_hooks.so' -exec rm {} \;
     - name: Build AppImage unsing appimage-builder
       uses: docker://appimagecrafters/appimage-builder:0.8.7
       with:
         entrypoint: appimage-builder
-        args: --recipe ./appimage.yml --skip-script --skip-build --skip-test   
+        args: --recipe ./appimage-builder.yml --skip-script --skip-build --skip-test   
     - name: Save build Artifact
       uses: actions/upload-artifact@v2
       with:
