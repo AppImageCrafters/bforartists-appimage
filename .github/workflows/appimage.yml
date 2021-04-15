@@ -23,7 +23,7 @@ jobs:
       # the ones required by the external application. Hoppefully almost everything is included in the 
       # bundle.
       run: |
-        sudo sed 's|LD_PRELOAD=*||g' -i AppDir/.env
+        sudo sed 's|LD_PRELOAD=.*||g' -i AppDir/.env
         sudo find AppDir/ -name 'libapprun_hooks.so' -exec rm {} \;
     - name: Build AppImage unsing appimage-builder
       uses: docker://appimagecrafters/appimage-builder:0.8.7
