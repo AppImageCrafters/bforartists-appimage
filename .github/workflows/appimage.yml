@@ -14,7 +14,7 @@ jobs:
       uses: docker://appimagecrafters/appimage-builder:0.8.7
       with:
         entrypoint: appimage-builder
-        args: --recipe ./AppImageBuilder.yml --skip-test --skip-appimage
+        args: --recipe /appimage-builder.yml --skip-test --skip-appimage
     - name: Remove libapprun_hooks.so
       # Workaround jmalloc issue with LD_PRELOAD hooks https://github.com/jemalloc/jemalloc/issues/443
       # 
