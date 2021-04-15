@@ -2,6 +2,7 @@
 version: 1
 
 script:
+  - which curl || apt-get install -y curl
   - rm -rf AppDir || true
   - curl -C - -O https://www.bforartists.de/data/binaries/Bforartists-v280.deb
   - dpkg-deb -x Bforartists-*.deb AppDir
