@@ -21,7 +21,7 @@ jobs:
       uses: docker://appimagecrafters/appimage-builder:0.8.7
       with:
         entrypoint: appimage-builder
-        args: --recipe ./AppImageBuilder.yml --skip-script --skip-build --skip-test   
+        args: --recipe ./appimage.yml --skip-script --skip-build --skip-test   
     - name: Save build Artifact
       uses: actions/upload-artifact@v2
       with:
