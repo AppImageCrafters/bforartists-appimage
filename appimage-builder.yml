@@ -21,7 +21,7 @@ AppDir:
     id: bforartists
     name: bforartists
     icon: bforartists
-    version: v2.9.3
+    version: v${BFORARTITS_VERSION}
     exec: usr/bin/bforartists
 
   apt:
@@ -38,11 +38,18 @@ AppDir:
       - libbsd0
       - libxdmcp6
       - libxau6
-      - libxi6
       - libxrender1
       - python3
       - libjack-jackd2-0
       - libpulse0
+      - libx11-6
+      - libxxf86vm1
+      - libxcursor1
+      - libxi6
+      - libxrandr2
+      - libxinerama1
+      - libglew2.1
+      
     exclude: []
 
   files:
