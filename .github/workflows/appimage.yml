@@ -10,26 +10,18 @@ jobs:
     runs-on: Ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
-    - name: Build AppDir unsing appimage-builder
-      uses: docker://appimagecrafters/appimage-builder:0.8.7
-      with:
-        entrypoint: appimage-builder
-        args: --recipe ./appimage-builder.yml --skip-test --skip-appimage
-    - name: Remove libapprun_hooks.so
-      # Workaround jmalloc issue with LD_PRELOAD hooks https://github.com/jemalloc/jemalloc/issues/443
-      # 
-      # Not using libapprun_hooks.so may cause that external applications called by bforartis to crash.
-      # This occurs mainly because the libraries inclided in the AppImage are not binary compatible with
-      # the ones required by the external application. Hoppefully almost everything is included in the 
-      # bundle.
+    - name: Install appimage-builder
       run: |
-        sudo sed 's|LD_PRELOAD=.*||g' -i AppDir/.env
-        sudo find AppDir/ -name 'libapprun_hooks.so' -exec rm {} \;
-    - name: Build AppImage unsing appimage-builder
-      uses: docker://appimagecrafters/appimage-builder:0.8.7
-      with:
-        entrypoint: appimage-builder
-        args: --recipe ./appimage-builder.yml --skip-script --skip-build --skip-test   
+        sudo apt install -y python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace fuse
+        sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
+        sudo chmod +x /usr/local/bin/appimagetool
+        
+        # use latest appimage-builder which includes the no_hooks entry 
+        sudo pip3 install git+https://github.com/AppImageCrafters/appimage-builder.git
+    - name: Create AppImage
+      run: |
+        export BFORARTITS_VERSION=2.9.3
+        appimage-builder --recipe appimage-builder.yml --skip-test
     - name: Save build Artifact
       uses: actions/upload-artifact@v2
       with:

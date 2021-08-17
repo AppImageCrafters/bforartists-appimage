@@ -2,10 +2,17 @@
 version: 1
 
 script:
-  - which curl || (apt-get update && apt-get install -y curl)
+  - which wget || (apt-get update && apt-get install -y wget)
   - rm -rf AppDir || true
-  - curl -C - -O https://www.bforartists.de/data/binaries/Bforartists-v280.deb
-  - dpkg-deb -x Bforartists-*.deb AppDir
+  - wget -c https://github.com/Bforartists/Bforartists/releases/download/v${BFORARTITS_VERSION}/Bforartists-${BFORARTITS_VERSION}-Linux.tar.xz
+  - tar -xf Bforartists-${BFORARTITS_VERSION}-Linux.tar.xz
+  - mv Bforartists-${BFORARTITS_VERSION}-Linux AppDir
+  # move resources to the expected folders
+  - mkdir -p AppDir/usr/share/applications/ AppDir/usr/share/icons/hicolor/scalable/apps/
+  - mv AppDir/usr/bin/bforartists.desktop AppDir/usr/share/applications/
+  - mv AppDir/usr/bin/bforartists.svg AppDir/usr/share/icons/hicolor/scalable/apps/
+  # remove non standard compilant line in desktop file
+  - sed '/^PrefersNonDefaultGPU=true/d' -i AppDir/usr/share/applications/bforartists.desktop
 
 AppDir:
   path: ./AppDir
@@ -14,16 +21,16 @@ AppDir:
     id: bforartists
     name: bforartists
     icon: bforartists
-    version: v280
-    exec: opt/bforartists/bforartists
+    version: v2.9.3
+    exec: usr/bin/bforartists
 
   apt:
     arch: amd64
     sources:
-      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ groovy main restricted universe multiverse'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse'
         key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920D1991BC93C'
-      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ groovy-updates main restricted universe multiverse'
-      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ groovy-backports main restricted universe multiverse'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe multiverse'
+      - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse'
 
     include:
       - libc6
@@ -31,6 +38,11 @@ AppDir:
       - libbsd0
       - libxdmcp6
       - libxau6
+      - libxi6
+      - libxrender1
+      - python3
+      - libjack-jackd2-0
+      - libpulse0
     exclude: []
 
   files:
@@ -43,8 +55,7 @@ AppDir:
       - usr/share/doc/*/TODO.*
     
   runtime:
-    path_mappings:
-      - /opt/bforartists/:$APPDIR/opt/bforartists/
+    no_hooks: True
 
   test:
     debian:
