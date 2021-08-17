@@ -7,6 +7,8 @@ script:
   - wget -c https://github.com/Bforartists/Bforartists/releases/download/v${BFORARTITS_VERSION}/Bforartists-${BFORARTITS_VERSION}-Linux.tar.xz
   - tar -xf Bforartists-${BFORARTITS_VERSION}-Linux.tar.xz
   - mv Bforartists-${BFORARTITS_VERSION}-Linux AppDir
+  # remove included graphic drivers libs (should not be included in AppImages)
+  - rm -r AppDir/usr/bin/lib
   # move resources to the expected folders
   - mkdir -p AppDir/usr/share/applications/ AppDir/usr/share/icons/hicolor/scalable/apps/
   - mv AppDir/usr/bin/bforartists.desktop AppDir/usr/share/applications/
@@ -33,22 +35,17 @@ AppDir:
       - sourceline: 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ focal-backports main restricted universe multiverse'
 
     include:
-      - libc6
-      - libstdc++6
       - libbsd0
-      - libxdmcp6
-      - libxau6
-      - libxrender1
-      - python3
+      - libc6
+      - libglew2.1
       - libjack-jackd2-0
       - libpulse0
-      - libx11-6
-      - libxxf86vm1
-      - libxcursor1
+      - libstdc++6
+      - libxau6
+      - libxdmcp6
       - libxi6
-      - libxrandr2
-      - libxinerama1
-      - libglew2.1
+      - libxrender1
+      - python3
       
     exclude: []
 
@@ -69,31 +66,22 @@ AppDir:
       image: appimagecrafters/tests-env:debian-stable
       command: "./AppRun"
       use_host_x: True
-      env:
-        QT_DEBUG_PLUGINS: 1
-    centos:
-      image: appimagecrafters/tests-env:centos-7
-      command: "./AppRun"
-      use_host_x: True
-      env:
-        QT_DEBUG_PLUGINS: 1
     arch:
       image: appimagecrafters/tests-env:archlinux-latest
       command: "./AppRun"
       use_host_x: True
-      env:
-        QT_DEBUG_PLUGINS: 1
     fedora:
       image: appimagecrafters/tests-env:fedora-30
       command: "./AppRun"
       use_host_x: True
-      env:
-        QT_DEBUG_PLUGINS: 1
     ubuntu:
       image: appimagecrafters/tests-env:ubuntu-xenial
       command: "./AppRun"
       use_host_x: True
-
+    centos:
+      image: appimagecrafters/tests-env:centos-7
+      command: "./AppRun"
+      use_host_x: True
 
 AppImage:
   update-information: None
